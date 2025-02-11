@@ -1,0 +1,33 @@
+from flask import Flask, request, jsonify
+
+app = Flask(__name__)
+
+@app.route('/desconto', methods=['GET'])
+def desconto():
+    try:
+        produto = request.args.get('produto').lower()
+        preco = float(request.args.get('preco'))
+    except (TypeError, ValueError):
+        return jsonify({"erro": "Por favor, forneça o nome do produto e o preço válidos."}), 400
+
+    if produto == "camisa":
+        desconto = 0.20  # 20% de desconto
+    elif produto == "bermuda":
+        desconto = 0.10  # 10% de desconto
+    elif produto == "calca" or produto == "calça":
+        desconto = 0.15  # 15% de desconto
+    else:
+        return jsonify({"erro": "Produto não encontrado. Utilize camisa, bermuda ou calça."}), 400
+
+    valor_desconto = preco * desconto
+    preco_final = preco - valor_desconto
+
+    return jsonify({
+        "produto": produto.capitalize(),
+        "desconto_percentual": desconto * 100,
+        "valor_desconto": round(valor_desconto, 2),
+        "preco_final": round(preco_final, 2)
+    })
+
+if __name__ == '__main__':
+    app.run(debug=True)
