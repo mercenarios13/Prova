@@ -1,0 +1,29 @@
+from flask import Flask, request, jsonify
+
+app = Flask(__name__)
+
+@app.route('/situacao', methods=['GET'])
+def situacao():
+    try:
+        nota1 = float(request.args.get('nota1'))
+        nota2 = float(request.args.get('nota2'))
+        nota3 = float(request.args.get('nota3'))
+    except (TypeError, ValueError):
+        return jsonify({"erro": "Por favor, forneça três notas válidas."}), 400
+
+    media = (nota1 + nota2 + nota3) / 3
+
+    if media >= 6:
+        situacao = "Aprovado"
+    elif media >= 4:
+        situacao = "Recuperação"
+    else:
+        situacao = "Reprovado"
+
+    return jsonify({
+        "media": round(media, 2),
+        "situacao": situacao
+    })
+
+if __name__ == '__main__':
+    app.run(debug=True)
