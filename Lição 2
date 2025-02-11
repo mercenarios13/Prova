@@ -1,0 +1,27 @@
+from flask import Flask, request, jsonify
+
+app = Flask(__name__)
+
+@app.route('/triangulo', methods=['GET'])
+def tipo_triangulo():
+    # Lê os parâmetros da requisição
+    try:
+        a = float(request.args.get('a'))
+        b = float(request.args.get('b'))
+        c = float(request.args.get('c'))
+    except (TypeError, ValueError):
+        return jsonify({"erro": "Por favor, forneça os três lados como parâmetros numéricos."}), 400
+
+    # Verifica o tipo de triângulo
+    if a == b == c:
+        tipo = "EQUILÁTERO"
+    elif a != b and b != c and a != c:
+        tipo = "ESCALENO"
+    else:
+        tipo = "ISÓSCELES"
+
+    # Retorna o tipo do triângulo
+    return jsonify({"tipo": tipo})
+
+if __name__ == '__main__':
+    app.run(debug=True)
