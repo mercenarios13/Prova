@@ -1,0 +1,23 @@
+from flask import Flask, request, jsonify
+
+app = Flask(__name__)
+
+@app.route('/ordenar-numeros', methods=['GET'])
+def ordenar_numeros():
+    try:
+        numeros = [
+            int(request.args.get('n1')),
+            int(request.args.get('n2')),
+            int(request.args.get('n3')),
+            int(request.args.get('n4')),
+            int(request.args.get('n5'))
+        ]
+    except (TypeError, ValueError):
+        return jsonify({"erro": "Por favor, forneça 5 números inteiros válidos."}), 400
+
+    numeros_ordenados = sorted(numeros)
+
+    return jsonify({"numeros_ordenados": numeros_ordenados})
+
+if __name__ == '__main__':
+    app.run(debug=True)
