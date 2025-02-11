@@ -1,0 +1,37 @@
+from flask import Flask, request, jsonify
+
+def calcular_inss(salario):
+    if salario <= 1212.00:
+        desconto = salario * 0.075
+    elif salario <= 2427.35:
+        desconto = salario * 0.09
+    elif salario <= 3641.03:
+        desconto = salario * 0.12
+    elif salario <= 7087.22:
+        desconto = salario * 0.14
+    else:
+        desconto = 7087.22 * 0.14  # Teto máximo
+    
+    salario_final = salario - desconto
+    return desconto, salario_final
+
+app = Flask(__name__)
+
+@app.route('/calcular-inss', methods=['POST'])
+def calcular():
+    data = request.get_json()
+    salario = data.get('salario')
+    
+    if salario is None or not isinstance(salario, (int, float)) or salario < 0:
+        return jsonify({"erro": "Salário inválido"}), 400
+    
+    desconto, salario_final = calcular_inss(salario)
+    
+    return jsonify({
+        "salario_bruto": salario,
+        "desconto_inss": round(desconto, 2),
+        "salario_liquido": round(salario_final, 2)
+    })
+
+if __name__ == '__main__':
+    app.run(debug=True)
