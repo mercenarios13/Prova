@@ -1,0 +1,24 @@
+from flask import Flask, request, jsonify
+
+app = Flask(__name__)
+
+@app.route('/preco', methods=['GET'])
+def calcular_preco():
+    # Lê os parâmetros da requisição
+    try:
+        nome = request.args.get('nome')
+        preco = float(request.args.get('preco'))
+    except (TypeError, ValueError):
+        return jsonify({"erro": "Por favor, forneça o nome e o preço como parâmetros."}), 400
+
+    if preco < 1000:
+        aumento = 0.05  # 5% de aumento
+    else:
+        aumento = 0.07  # 7% de aumento
+
+    novo_preco = preco * (1 + aumento)
+
+    return jsonify({"nome": nome, "novo_preco": round(novo_preco, 2)})
+
+if __name__ == '__main__':
+    app.run(debug=True)
